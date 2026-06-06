@@ -1,80 +1,275 @@
+@model LoginViewModel
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Kirish";
+    Layout = null;
 }
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kirish — NexusCRM</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@@300;400;500;600;700;800&display=swap');
 
-<div class="login-card">
-    <div class="card shadow-lg">
-        <div class="card-body p-5">
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
+        }
+
+        .bg-mesh {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 10% 0%, rgba(99,102,241,0.22) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 90% 100%, rgba(139,92,246,0.18) 0%, transparent 55%),
+                radial-gradient(ellipse 50% 40% at 50% 50%, rgba(6,182,212,0.07) 0%, transparent 60%);
+        }
+
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .login-wrap {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            padding: 1rem;
+        }
+
+        .login-card {
+            background: rgba(255,255,255,0.97);
+            border-radius: 20px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+            padding: 2.25rem 2rem;
+        }
+
+        .brand-logo {
+            width: 52px; height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            color: white;
+            margin: 0 auto 1rem;
+            box-shadow: 0 6px 20px rgba(99,102,241,0.45);
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+        }
+
+        .login-sub {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #374151;
+            margin-bottom: 0.4rem;
+        }
+
+        .input-group-text {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+            border-right: none;
+            color: #94a3b8;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .form-control {
+            border-color: #e2e8f0;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.9rem;
+            padding: 0.6rem 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+        }
+
+        .input-group:focus-within .input-group-text {
+            border-color: #6366f1;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.7rem;
+            width: 100%;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(99,102,241,0.38);
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(99,102,241,0.48);
+        }
+
+        .demo-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+            border-radius: 10px;
+            padding: 0.85rem 1rem;
+            border: 1px solid #dbeafe;
+            font-size: 0.82rem;
+            color: #1e40af;
+        }
+
+        .demo-box code {
+            background: rgba(99,102,241,0.1);
+            color: #6366f1;
+            padding: 0.15em 0.45em;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #cbd5e1;
+            font-size: 0.8rem;
+            margin: 1rem 0;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .register-link {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+        .register-link a {
+            color: #6366f1;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .register-link a:hover { text-decoration: underline; }
+
+        .floating-pill {
+            position: fixed;
+            background: rgba(99,102,241,0.15);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+        .pill1 { width: 80px; height: 80px; top: 10%; left: 5%; animation-delay: 0s; }
+        .pill2 { width: 120px; height: 120px; bottom: 15%; right: 8%; animation-delay: 3s; }
+        .pill3 { width: 50px; height: 50px; top: 60%; left: 15%; animation-delay: 5s; }
+
+        @@keyframes float {
+            0%,100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-mesh"></div>
+    <div class="bg-grid"></div>
+    <div class="floating-pill pill1"></div>
+    <div class="floating-pill pill2"></div>
+    <div class="floating-pill pill3"></div>
+
+    <div class="login-wrap">
+        <div class="login-card">
             <div class="text-center mb-4">
-                <div class="user-avatar user-avatar-lg mx-auto mb-3" style="background: var(--brand-primary);">
-                    <i class="bi bi-box-seam" style="font-size: 1.5rem;"></i>
+                <div class="brand-logo">
+                    <i class="fas fa-bolt"></i>
                 </div>
-                <h2 class="page-title">Welcome back</h2>
-                <p class="page-subtitle">Sign in to your account</p>
+                <div class="login-title">NexusCRM</div>
+                <div class="login-sub">Hisobingizga kiring</div>
             </div>
 
-            @if (TempData["Error"] != null)
+            @if (ViewData.ModelState.ErrorCount > 0)
             {
-                <div class="alert alert-danger">
-                    <i class="bi bi-exclamation-circle"></i>
-                    <span>@TempData["Error"]</span>
+                <div class="alert alert-danger rounded-3 small mb-3 py-2 px-3" style="background:#fef2f2;color:#991b1b;border:none;">
+                    <i class="fas fa-circle-exclamation me-2"></i>
+                    <span asp-validation-summary="ModelOnly"></span>
                 </div>
             }
 
-            <form asp-controller="Account" asp-action="Login" method="post" class="mb-4">
-                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+            <form asp-action="Login" asp-route-returnUrl="@ViewBag.ReturnUrl" method="post">
                 <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
+                    <label asp-for="Email" class="form-label">Email manzil</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-transparent"><i class="bi bi-envelope"></i></span>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" required />
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        <input asp-for="Email" class="form-control" placeholder="email@crm.uz" autocomplete="email" />
                     </div>
+                    <span asp-validation-for="Email" class="text-danger" style="font-size:0.78rem;"></span>
                 </div>
-                <div class="mb-4">
-                    <label for="password" class="form-label">Password</label>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label">Parol</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-transparent"><i class="bi bi-lock"></i></span>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required />
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input asp-for="Password" class="form-control" type="password" placeholder="••••••••" autocomplete="current-password" />
                     </div>
+                    <span asp-validation-for="Password" class="text-danger" style="font-size:0.78rem;"></span>
                 </div>
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
-                    </button>
+
+                <div class="form-check mb-3">
+                    <input asp-for="RememberMe" class="form-check-input" type="checkbox" />
+                    <label asp-for="RememberMe" class="form-check-label" style="font-size:0.85rem;color:#64748b;">Meni eslab qol</label>
                 </div>
+
+                <button type="submit" class="btn-login mb-3">
+                    <i class="fas fa-right-to-bracket me-2"></i>Kirish
+                </button>
             </form>
 
-            <div class="text-center text-muted mb-3">
-                <small>or sign in with a social account</small>
+            <div class="demo-box mb-3">
+                <div class="fw-semibold mb-1"><i class="fas fa-circle-info me-1"></i> Demo kirish</div>
+                Email: <code>admin@crm.uz</code> &nbsp;|&nbsp; Parol: <code>Admin@123!</code>
             </div>
 
-            <form asp-controller="Account" asp-action="ExternalLogin" method="post" class="d-grid gap-2">
-                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
-                <button type="submit" name="provider" value="Google" class="btn btn-ghost btn-lg">
-                    <i class="bi bi-google me-2"></i> Sign in with Google
-                </button>
-                <button type="submit" name="provider" value="Facebook" class="btn btn-ghost btn-lg">
-                    <i class="bi bi-facebook me-2"></i> Sign in with Facebook
-                </button>
-            </form>
+            <div class="divider">yoki</div>
 
-            <div class="mt-4 pt-3 border-top">
-                <details>
-                    <summary class="text-muted small" style="cursor:pointer;">
-                        <i class="bi bi-info-circle me-1"></i> Demo credentials
-                    </summary>
-                    <div class="mt-2">
-                        <table class="table table-sm small mb-0">
-                            <thead><tr><th>Role</th><th>Email</th><th>Password</th></tr></thead>
-                            <tbody>
-                                <tr><td><span class="badge badge-soft-danger">Admin</span></td><td>admin@@inventory.com</td><td><code>admin123</code></td></tr>
-                                <tr><td><span class="badge badge-soft-warning">Creator</span></td><td>creator@@inventory.com</td><td><code>creator123</code></td></tr>
-                                <tr><td><span class="badge badge-soft-secondary">User</span></td><td>user@@inventory.com</td><td><code>user123</code></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </details>
+            <div class="register-link">
+                Hisobingiz yo'qmi?
+                <a asp-action="Register">Ro'yxatdan o'ting</a>
             </div>
         </div>
     </div>
-</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>
