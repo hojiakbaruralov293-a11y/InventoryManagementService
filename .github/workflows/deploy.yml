@@ -99,6 +99,10 @@ jobs:
             docker stop inventory-app 2>/dev/null || true
             docker rm   inventory-app 2>/dev/null || true
 
+            # Port 8080 ni ishlatayotgan barcha jarayonlarni to'xtatish
+            sudo fuser -k 8080/tcp 2>/dev/null || true
+            sleep 2
+
             # Yangi containerni port 8080 da ishga tushirish (nginx proxy qiladi)
             docker run -d \
               --name inventory-app \
