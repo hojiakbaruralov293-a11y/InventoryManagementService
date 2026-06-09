@@ -99,6 +99,10 @@ jobs:
             docker stop inventory-app 2>/dev/null || true
             docker rm   inventory-app 2>/dev/null || true
 
+            # Port 80 ni band qilgan boshqa containerlarni to'xtatish
+            docker ps -q --filter "publish=80" | xargs -r docker stop 2>/dev/null || true
+            docker ps -aq --filter "publish=80" | xargs -r docker rm 2>/dev/null || true
+
             # Yangi containerni ishga tushirish
             docker run -d \
               --name inventory-app \
