@@ -88,7 +88,7 @@ jobs:
           script: |
             set -e
 
-            # GHCR ga login (workflow token bilan — har deploy yangilanadi)
+            # GHCR ga login
             echo "$GH_TOKEN" | docker login ghcr.io -u "$GH_ACTOR" --password-stdin
 
             # Yangi imageni tortish
@@ -99,17 +99,56 @@ jobs:
             docker stop inventory-app 2>/dev/null || true
             docker rm   inventory-app 2>/dev/null || true
 
-            # Port 80 ni ishlatayotgan BARCHA jarayonlarni to'xtatish (nginx, apache, docker, va h.k.)
-            sudo fuser -k 80/tcp 2>/dev/null || true
-            sleep 2
-
-            # Yangi containerni ishga tushirish
+            # Yangi containerni port 8080 da ishga tushirish (nginx proxy qiladi)
             docker run -d \
               --name inventory-app \
               --restart unless-stopped \
-              -p 80:8080 \
+              -p 8080:8080 \
               $([ -f /home/ubuntu/.env ] && echo "--env-file /home/ubuntu/.env" || echo "") \
               "$IMAGE"
+
+            # Container ishga tushganini tekshirish
+            sleep 5
+            if ! docker ps --filter "name=inventory-app" --filter "status=running" | grep -q inventory-app; then
+              echo "❌ Container ishga tushmadi! Loglar:"
+              docker logs inventory-app --tail 50
+              exit 1
+            fi
+            echo "✅ Container ishlamoqda"
+
+            # Nginx o'rnatish (agar yo'q bo'lsa)
+            if ! command -v nginx &>/dev/null; then
+              sudo apt-get update -qq && sudo apt-get install -y -qq nginx
+            fi
+
+            # Nginx konfiguratsiyasi — port 80 → 8080
+            sudo tee /etc/nginx/sites-available/nexuscrm > /dev/null <<'NGINX'
+            server {
+                listen 80;
+                server_name _;
+
+                location / {
+                    proxy_pass         http://localhost:8080;
+                    proxy_http_version 1.1;
+                    proxy_set_header   Upgrade $http_upgrade;
+                    proxy_set_header   Connection keep-alive;
+                    proxy_set_header   Host $host;
+                    proxy_set_header   X-Real-IP $remote_addr;
+                    proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header   X-Forwarded-Proto $scheme;
+                    proxy_cache_bypass $http_upgrade;
+                }
+            }
+            NGINX
+
+            # Default konfiguratsiyani o'chirib, nexuscrm ni yoqish
+            sudo ln -sf /etc/nginx/sites-available/nexuscrm /etc/nginx/sites-enabled/nexuscrm
+            sudo rm -f /etc/nginx/sites-enabled/default
+
+            # Nginx konfiguratsiyasini tekshirish va qayta yuklash
+            sudo nginx -t
+            sudo systemctl enable nginx
+            sudo systemctl restart nginx
 
             # GHCR dan chiqish
             docker logout ghcr.io
